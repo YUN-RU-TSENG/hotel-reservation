@@ -7,7 +7,8 @@
     "serve": "vite preview",
     "lint": "eslint 'src/**/*.{js,vue}'",
     "lint:fix": "eslint 'src/**/*.{js,vue}' --fix",
-    "format": "prettier . --write"
+    "format": "prettier . --write",
+    "prepare": "husky install"
   },
   "dependencies": {
     "vue": "^3.2.16"
@@ -18,6 +19,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-vue": "^8.0.3",
     "prettier": "^2.4.1",
-    "vite": "^2.6.4"
+    "vite": "^2.6.4",
+    "husky": "^7.0.0"
   }
 }
