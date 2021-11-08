@@ -8,11 +8,11 @@ module.exports = {
   collectCoverage: true,
 
   // An array of file extensions your modules use
-  moduleFileExtensions: ["js", "json", "vue"],
+  moduleFileExtensions: ['js', 'json', 'vue'],
 
   // A map from regular expressions to paths to transformers
   transform: {
-    "^.+\\.vue$": "@vue/vue3-jest",
-    "^.+\\.js$": "babel-jest",
+    '^.+\\.vue$': '@vue/vue3-jest',
+    '^.+\\.js$': 'babel-jest',
   },
-};
+}
