@@ -3,11 +3,11 @@
  */
 
 import { mount } from '@vue/test-utils'
-import test from '../components/test.vue'
+import TestItem from '../components/TestItem.vue'
 
-describe('Component Admin', () => {
+describe('Component TestItem', () => {
   it('render profile', () => {
-    const wrapper = mount(test)
+    const wrapper = mount(TestItem)
 
     expect(wrapper.get('[data-test="test"]').text()).toBe('test')
   })

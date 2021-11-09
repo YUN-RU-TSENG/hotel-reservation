@@ -11,9 +11,10 @@
     "prepare": "husky install"
   },
   "lint-staged": {
-    "*.{js,vue}": [
+    "!(*spec).{js,vue}": [
       "prettier --write",
-      "eslint 'src/**/*.{js,vue}' --fix"
+      "eslint 'src/**/*.{js,vue}' --fix",
+      "jest --bail --findRelatedTests"
     ]
   },
   "dependencies": {
