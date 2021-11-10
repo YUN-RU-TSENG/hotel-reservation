@@ -1,23 +1,23 @@
 {
-  "env": {
-    "es2021": true,
-    "node": true,
-    "jest/globals": true
-  },
-  "globals": {
-    "defineProps": "readonly",
-    "defineEmits": "readonly",
-    "defineExpose": "readonly",
-    "withDefaults": "readonly"
-  },
-  "extends": ["eslint:recommended", "plugin:vue/vue3-recommended", "prettier"],
-  "parserOptions": {
-    "ecmaVersion": 13,
-    "sourceType": "module"
-  },
-  "plugins": ["vue", "jest"],
-  "rules": {
-    // Enable vue/script-setup-uses-vars rule
-    "vue/script-setup-uses-vars": "error"
-  }
+    "env": {
+        "es2021": true,
+        "node": true,
+        "jest/globals": true
+    },
+    "globals": {
+        "defineProps": "readonly",
+        "defineEmits": "readonly",
+        "defineExpose": "readonly",
+        "withDefaults": "readonly"
+    },
+    "extends": ["eslint:recommended", "plugin:vue/vue3-recommended", "prettier"],
+    "parserOptions": {
+        "ecmaVersion": 13,
+        "sourceType": "module"
+    },
+    "plugins": ["vue", "jest"],
+    "rules": {
+        // Enable vue/script-setup-uses-vars rule
+        "vue/script-setup-uses-vars": "error"
+    }
 }
