@@ -106,6 +106,7 @@
 <style lang="scss" scoped>
     .room {
         display: flex;
+        align-items: flex-start;
     }
 
     //==============================================================================
@@ -143,6 +144,7 @@
         max-width: 665px;
         margin-left: 30px;
         padding-top: 133px;
+        padding-bottom: 40px;
         color: #38470b;
     }
 </style>
