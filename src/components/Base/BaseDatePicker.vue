@@ -182,9 +182,11 @@
 
             // 計算展示需要填充的 flex 項目數量
             const calculateFlexItem = (month) => {
-                return Array(
-                    dayjs(new Date(month.value.year(), month.value.month(), 1)).day() - 1
-                ).fill(0)
+                const length =
+                    dayjs(new Date(month.value.year(), month.value.month(), 1)).day() >= 1
+                        ? dayjs(new Date(month.value.year(), month.value.month(), 1)).day() - 1
+                        : 0
+                return Array(length).fill(0)
             }
 
             // 算出這個月的月份、所有日期隨月份更動
@@ -340,10 +342,16 @@
         > div.begin {
             z-index: 1;
         }
+
+        > div.begin + .end {
+            box-shadow: -30px 0px 0px 0px #ccd3b3, inset 30px 0px 0px 0px #ccd3b3;
+        }
+
         > div.begin + .range {
             box-shadow: -30px 0px 0px 0px #ccd3b3, inset -30px 0px 0px 0px #ccd3b3,
                 30px 0px 0px 0px #ccd3b3, inset -30px 0px 0px 0px #ccd3b3;
         }
+
         > div.range {
             box-shadow: 30px 0px 0px 0px #ccd3b3, inset -30px 0px 0px 0px #ccd3b3;
         }
