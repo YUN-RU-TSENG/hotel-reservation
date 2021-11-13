@@ -43,6 +43,7 @@
 
         input {
             display: none;
+            font-size: 0;
         }
 
         input:hover ~ span {

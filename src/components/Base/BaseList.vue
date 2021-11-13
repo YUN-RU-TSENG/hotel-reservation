@@ -19,11 +19,10 @@
 
         li {
             display: block;
-        }
-
-        li::before {
-            content: '・';
-            vertical-align: middle;
+            padding-left: 20px;
+            background-image: url(../../assets/images/dot.png);
+            background-repeat: no-repeat;
+            background-position: 0 5px;
         }
     }
 </style>
