@@ -30,15 +30,17 @@
             </div>
         </div>
     </section>
-    <h2></h2>
+    <h2 class="room-introduce-title">空房狀態查詢</h2>
+    <BaseDatePicker></BaseDatePicker>
 </template>
 
 <script>
     import SvgIcon from '../SvgIcon.vue'
     import BaseList from '../Base/BaseList.vue'
+    import BaseDatePicker from '../Base/BaseDatePicker.vue'
 
     export default {
-        components: { SvgIcon, BaseList },
+        components: { SvgIcon, BaseList, BaseDatePicker },
         props: { room: { type: Object, required: true } },
         setup(props) {
             const introduceList = props.room.description.split('. ')
@@ -126,5 +128,11 @@
                 padding-left: 4px;
             }
         }
+    }
+
+    .room-introduce-title {
+        font: normal normal 600 14px/24px 'Noto Sans CJK TC';
+        color: #38470b;
+        margin-bottom: 8px;
     }
 </style>
