@@ -1,7 +1,11 @@
 <template>
     <div class="row">
         <div v-for="room of rooms" :key="room.name" class="col">
-            <router-link v-slot="{ navigate }" :to="{ name: 'room' }" custom>
+            <router-link
+                v-slot="{ navigate }"
+                :to="{ name: 'room', params: { id: room.id } }"
+                custom
+            >
                 <a
                     :style="{
                         background: 'url(' + room.imageUrl + ') center / cover no-repeat',

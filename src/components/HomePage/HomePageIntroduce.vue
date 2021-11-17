@@ -26,7 +26,7 @@
 
         p {
             color: #fff;
-            font: normal normal 300 12px/18px Noto Sans CJK TC;
+            font: normal normal 300 12px/18px Noto Sans TC;
             &:nth-of-type(1) {
                 margin-bottom: 16px;
                 font-weight: normal;
