@@ -2,8 +2,8 @@
     <div>
         <!-- reservation-goback -->
         <router-link v-slot="{ navigate }" :to="{ name: 'home' }" custom>
-            <a href class="room-reservation-goback" @click="navigate"
-                ><SvgIcon name="icon15" width="8.31px" height="15.87px"></SvgIcon>
+            <a href class="room-reservation-goback" @click="navigate">
+                <SvgIcon name="icon15" width="8.31px" height="15.87px"></SvgIcon>
                 <span>查看其他房型</span>
             </a>
         </router-link>
@@ -14,7 +14,7 @@
                 <span>/</span>
                 <span>1晚</span>
             </p>
-            <BaseButton>Booking now</BaseButton>
+            <BaseButton @click="toggleShow">Booking now</BaseButton>
             <slot></slot>
         </section>
     </div>
@@ -27,6 +27,11 @@
     export default {
         components: { SvgIcon, BaseButton },
         props: { price: { type: Number, required: true } },
+        emits: ['toggle-show'],
+        setup(_, { emit }) {
+            const toggleShow = () => emit('toggle-show')
+            return { toggleShow }
+        },
     }
 </script>
 
@@ -44,7 +49,7 @@
 
         span {
             vertical-align: middle;
-            font: normal normal 300 14px/24px 'Noto Sans CJK TC';
+            font: normal normal 300 14px/24px 'Noto Sans TC';
             letter-spacing: 0px;
             color: #38470b;
         }

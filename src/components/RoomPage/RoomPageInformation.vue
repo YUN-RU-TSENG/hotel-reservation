@@ -87,7 +87,7 @@
     // room-introduce-time
     .room-introduce-time {
         margin-bottom: 35px;
-        font: normal normal normal 14px/24px 'Noto Sans CJK TC';
+        font: normal normal normal 14px/24px 'Noto Sans TC';
 
         li {
             display: block;
@@ -131,7 +131,7 @@
     }
 
     .room-introduce-title {
-        font: normal normal 600 14px/24px 'Noto Sans CJK TC';
+        font: normal normal 600 14px/24px 'Noto Sans TC';
         color: #38470b;
         margin-bottom: 8px;
     }

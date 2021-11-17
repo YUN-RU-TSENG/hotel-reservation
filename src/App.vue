@@ -4,4 +4,10 @@
     <router-view></router-view>
 </template>
 
-<style></style>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;900&display=swap');
+</style>
+
+<style lang="scss">
+    @import './assets/styles/reset.scss';
+</style>

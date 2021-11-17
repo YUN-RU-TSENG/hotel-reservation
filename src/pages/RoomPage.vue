@@ -1,17 +1,15 @@
 <template>
+    <!-- room -->
     <section class="room">
         <!-- rooom-reservation -->
-        <section
-            class="room-reservation"
-            :style="{
-                background:
-                    'linear-gradient(180deg, #ffffff10, #ffffff), center / cover no-repeat ' +
-                    background,
-            }"
-        >
-            <RoomPageReservation class="room-reservation-container" :price="price">
+        <section v-if="room.id" class="room-reservation" :style="{ background }">
+            <RoomPageReservation
+                class="room-reservation-container"
+                :price="roomPrice"
+                @toggle-show="isShowReserveForm = true"
+            >
                 <BaseCarouselIndicators
-                    v-model:modelValue="backgroundIndex"
+                    v-model:modelValue="currentBackground"
                     :options="backgroundFormatOptions"
                     name="background-room"
                 ></BaseCarouselIndicators>
@@ -19,87 +17,161 @@
         </section>
         <!-- rooom-introduce -->
         <section class="room-introduce">
-            <RoomPageInformation :room="room" />
+            <RoomPageInformation v-if="room.id" :room="room" />
         </section>
     </section>
+    <!-- popover -->
+    <!-- room-page-popover-reserve -->
+    <RoomPagePopover
+        v-if="room.id"
+        v-model:show="isShowReserveForm"
+        class="room-page-popover-reserve"
+    >
+        <RoomPageReserveForm
+            :room="room"
+            :price="roomPrice"
+            :is-submiting-reserve-form="isSubmitingReserveForm"
+            :is-show-reserve-form="isShowReserveForm"
+            @submit-form="submitReserveForm"
+        ></RoomPageReserveForm>
+    </RoomPagePopover>
+    <!-- popover -->
+    <!-- room-page-popover-result -->
+    <RoomPagePopover v-if="room.id" v-model:show="isShowResult" class="room-page-popover-result">
+        <RoomPageResult :result="reserveResult"></RoomPageResult>
+    </RoomPagePopover>
 </template>
 
 <script>
     import RoomPageReservation from '../components/RoomPage/RoomPageReservation.vue'
     import RoomPageInformation from '../components/RoomPage/RoomPageInformation.vue'
+    import RoomPagePopover from '../components/RoomPage/RoomPagePopover.vue'
+    import RoomPageReserveForm from '../components/RoomPage/RoomPageReserveForm.vue'
+    import RoomPageResult from '../components/RoomPage/RoomPageResult.vue'
     import BaseCarouselIndicators from '../components/Base/BaseCarouselIndicators.vue'
     import { ref, computed } from 'vue'
+    import { useRoute } from 'vue-router'
+    // import { useRoute, onBeforeRouteUpdate } from 'vue-router'
+    import axios from 'axios'
+
+    const api = axios.create({
+        baseURL: 'https://challenge.thef2e.com/api/thef2e2019/stage6/',
+        timeout: 3000,
+        headers: {
+            Authorization: 'Bearer p2FP3rIsABET2oxPlvYOBSCkT4qb6XxJU3Rt19hjxfFyyDjoW1UFnQouCoBe',
+            Accept: 'application/json',
+        },
+    })
 
     export default {
-        components: { RoomPageReservation, RoomPageInformation, BaseCarouselIndicators },
-        setup() {
-            const room = {
-                id: '3Elqe8kfMxdZv5xFLV4OUeN6jhmxIvQSTyj4eTgIowfIRvF4rerA2Nuegzc2Rgwu',
-                name: 'Single Room',
-                imageUrl: [
-                    'https://images.unsplash.com/photo-1551776235-dde6d482980b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2134&q=80',
-                    'https://images.unsplash.com/photo-1526880792616-4217886b9dc2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80',
-                    'https://images.unsplash.com/photo-1515511856280-7b23f68d2996?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1953&q=80',
-                ],
-                normalDayPrice: 1380,
-                holidayPrice: 1500,
-                descriptionShort: {
-                    GuestMin: 1,
-                    GuestMax: 1,
-                    Bed: ['Single'],
-                    'Private-Bath': 1,
-                    Footage: 18,
-                },
-                description:
-                    'Single Room is only reserved for one guest. There is a bedroom with a single size bed and a private bathroom. Everything you need prepared for you: sheets and blankets, towels, soap and shampoo, hairdryer are provided. In the room there is AC and of course WiFi.',
-                checkInAndOut: {
-                    checkInEarly: '15:00',
-                    checkInLate: '19:00',
-                    checkOut: '10:00',
-                },
-                amenities: {
-                    'Wi-Fi': true,
-                    Breakfast: true,
-                    'Mini-Bar': false,
-                    'Room-Service': false,
-                    Television: true,
-                    'Air-Conditioner': true,
-                    Refrigerator: true,
-                    Sofa: false,
-                    'Great-View': false,
-                    'Smoke-Free': true,
-                    'Child-Friendly': false,
-                    'Pet-Friendly': true,
-                },
-            }
-
-            const price = isHoliday() ? room.holidayPrice : room.normalDayPrice
-
-            function isHoliday() {
-                const today = new Date()
-                if (today.getDay() === 0 || today.getDay() === 6) return true
-                else return false
-            }
-
-            const backgroundIndex = ref(1)
-            const backgroundOptions = room.imageUrl.map((item, index) => ({ id: index, url: item }))
-            const backgroundFormatOptions = backgroundOptions.map((item) => ({
-                id: item.id,
-                value: item.id,
-            }))
-            const background = computed(() => {
-                const url = backgroundOptions.find((item) => item.id == backgroundIndex.value)
-                return `url(${url.url})`
-            })
-
-            return {
-                backgroundIndex,
-                background,
-                backgroundFormatOptions,
-                room,
-                price,
+        components: {
+            RoomPageReservation,
+            RoomPageInformation,
+            RoomPageReserveForm,
+            RoomPagePopover,
+            RoomPageResult,
+            BaseCarouselIndicators,
+        },
+        async beforeRouteEnter(to, from, next) {
+            try {
+                const { data } = await api.get(`/room/${to.params.id}`)
+                next((vm) => (vm.room = data.room[0]))
+            } catch (error) {
+                console.error(error)
             }
         },
+        setup() {
+            const { room } = useRoom()
+            const { roomPrice } = useRoomPrice(room)
+            const { background, currentBackground, backgroundFormatOptions } =
+                useBackgroundStyle(room)
+
+            const route = useRoute()
+
+            const isShowReserveForm = ref(false)
+            const isShowResult = ref(false)
+            const isReserveSuccess = ref(null)
+            const reserveResult = computed(() => (isReserveSuccess.value ? 'success' : 'fail'))
+            const isSubmitingReserveForm = ref(false)
+            const submitReserveForm = async (formData) => {
+                try {
+                    isReserveSuccess.value = null
+                    isSubmitingReserveForm.value = true
+                    const { data } = await api.post(`/room/${route.params.id}`, formData)
+                    isReserveSuccess.value = data.success
+                } catch (err) {
+                    console.error(err)
+                } finally {
+                    isSubmitingReserveForm.value = false
+                    isShowReserveForm.value = false
+                    isShowResult.value = true
+                }
+            }
+
+            return {
+                background,
+                currentBackground,
+                backgroundFormatOptions,
+                room,
+                roomPrice,
+                isShowReserveForm,
+                isShowResult,
+                isReserveSuccess,
+                reserveResult,
+                isSubmitingReserveForm,
+                submitReserveForm,
+            }
+        },
+    }
+
+    function useBackgroundStyle(room) {
+        const currentBackground = ref(1)
+        const backgroundOptions = computed(() =>
+            room.value?.imageUrl?.map((item, index) => ({ id: index, url: item }))
+        )
+        const backgroundFormatOptions = computed(() =>
+            backgroundOptions.value?.map(({ id }) => ({
+                id,
+                value: id,
+            }))
+        )
+        const background = computed(() => {
+            const data = backgroundOptions.value?.find(({ id }) => id == currentBackground.value)
+
+            return `linear-gradient(180deg, #ffffff10, #fff), center / cover no-repeat url(${
+                data?.url ?? ''
+            })`
+        })
+
+        return {
+            background,
+            currentBackground,
+            backgroundFormatOptions,
+        }
+    }
+
+    function useRoom() {
+        const room = ref({})
+
+        return {
+            room,
+        }
+    }
+
+    function useRoomPrice(room) {
+        const isHoliday = () => {
+            const today = new Date()
+            if (today.getDay() === 0 || today.getDay() === 6) return true
+            else return false
+        }
+
+        const roomPrice = computed(() =>
+            isHoliday() ? room.value?.holidayPrice : room.value?.normalDayPrice
+        )
+
+        return {
+            roomPrice,
+        }
     }
 </script>
 
@@ -146,5 +218,21 @@
         padding-top: 133px;
         padding-bottom: 40px;
         color: #38470b;
+    }
+
+    // room-page-popover-reserve
+    //==============================================================================
+    .room-page-popover-reserve {
+        ::v-deep(.room-popover-container) {
+            display: flex;
+        }
+    }
+
+    // room-page-popover-result
+    //==============================================================================
+    .room-page-popover-result {
+        ::v-deep(.room-popover-close svg use) {
+            fill: #fff;
+        }
     }
 </style>
