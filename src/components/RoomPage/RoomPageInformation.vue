@@ -1,6 +1,11 @@
 <template>
     <!-- room-introduce-advertise -->
-    <p class="room-introduce-advertise">1人・ 單人床・ 附早餐・衛浴1間・18平方公尺</p>
+    <p class="room-introduce-advertise">
+        {{ roomGuest }}人・ {{ room.descriptionShort.Bed[0] }} 床
+        {{ room.amenities.Breakfast ? '・附早餐・' : '・' }}衛浴{{
+            room.descriptionShort['Private-Bath']
+        }}間・{{ room.descriptionShort.Footage }} 平方公尺
+    </p>
     <!-- room-introduce-time -->
     <ul class="room-introduce-time">
         <li>
@@ -25,11 +30,16 @@
                     <p>{{ featureChinese[item[0]] }}</p>
                 </div>
                 <div class="state">
-                    <SvgIcon name="icon2" width="15px" height="15px"></SvgIcon>
+                    <SvgIcon
+                        :name="item[0] ? 'icon1' : 'icon2'"
+                        width="15px"
+                        height="15px"
+                    ></SvgIcon>
                 </div>
             </div>
         </div>
     </section>
+    <!-- room-introduce-datepicker -->
     <h2 class="room-introduce-title">空房狀態查詢</h2>
     <BaseDatePicker></BaseDatePicker>
 </template>
@@ -38,6 +48,7 @@
     import SvgIcon from '../SvgIcon.vue'
     import BaseList from '../Base/BaseList.vue'
     import BaseDatePicker from '../Base/BaseDatePicker.vue'
+    import useRoomGuest from '../../composables/roomPages/useRoomGuest'
 
     export default {
         components: { SvgIcon, BaseList, BaseDatePicker },
@@ -45,7 +56,7 @@
         setup(props) {
             const introduceList = props.room.description.split('. ')
             const amenities = Object.entries(props.room.amenities)
-
+            const roomGuest = useRoomGuest(props.room)
             const formatTime = (time) => {
                 return time.replace(/(\d{2})(:)(\d{2})/g, '$1：$3')
             }
@@ -54,6 +65,7 @@
                 introduceList,
                 amenities,
                 formatTime,
+                roomGuest,
                 featureChinese: {
                     'Wi-Fi': 'Wi-Fi',
                     Breakfast: '早餐',

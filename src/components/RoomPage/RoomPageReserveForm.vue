@@ -24,16 +24,17 @@
     </section>
     <!-- reserve-information -->
     <section class="reserve-information">
-        <h2><span>Single Room</span></h2>
+        <h2>
+            <span>{{ room.name }}</span>
+        </h2>
         <ul class="room-information">
             <li>
-                {{
-                    room.descriptionShort.GuestMin === room.descriptionShort.GuestMax
-                        ? room.descriptionShort.GuestMin
-                        : room.descriptionShort.GuestMin + '~' + room.descriptionShort.GuestMax
-                }}人・ {{ room.descriptionShort.Bed[0] }} 床・附早餐・ 衛浴{{
-                    room.descriptionShort['Private-Bath']
-                }}間・{{ room.descriptionShort.Footage }}平方公尺
+                {{ roomGuest }}人・ {{ room.descriptionShort.Bed[0] }} 床{{
+                    room.amenities.Breakfast ? '・附早餐・' : '・'
+                }}衛浴{{ room.descriptionShort['Private-Bath'] }}間・{{
+                    room.descriptionShort.Footage
+                }}
+                平方公尺
             </li>
             <li>
                 平日（一～四）價格：{{ room.normalDayPrice }} / 假日（五〜日）價格：{{
@@ -100,6 +101,7 @@
 <script>
     import SvgIcon from '../SvgIcon.vue'
     import BaseList from '../Base/BaseList.vue'
+    import useRoomGuest from '../../composables/roomPages/useRoomGuest'
     import { computed, ref, watchEffect } from 'vue'
     import dayjs from 'dayjs'
 
@@ -113,6 +115,7 @@
         },
         emits: ['submit-form', 'toggle-show'],
         setup(props, { emit }) {
+            const roomGuest = useRoomGuest(props.room)
             const form = ref({
                 name: '',
                 phone: '',
@@ -128,7 +131,7 @@
                 const total = Math.abs(dayjs(begindate).diff(dayjs(enddate), 'day'))
                 return Array(total)
                     .fill(0)
-                    .map((item, index) => {
+                    .map((_, index) => {
                         return dayjs(begindate).add(index, 'day').format('YYYY-MM-DD')
                     })
             }
@@ -140,7 +143,9 @@
                     date: totalDatesFormat(form.value.beginDate, form.value.endDate),
                 })
             }
-            const amenities = Object.entries(props.room.amenities).filter((item) => item.value)
+            const amenities = computed(() =>
+                Object.entries(props.room.amenities).filter((item) => item.value)
+            )
 
             watchEffect(() => {
                 if (props.isShowReserveForm === false)
@@ -158,6 +163,7 @@
                 totalDates,
                 submitForm,
                 amenities,
+                roomGuest,
                 featureChinese: {
                     'Wi-Fi': 'Wi-Fi',
                     Breakfast: '早餐',
