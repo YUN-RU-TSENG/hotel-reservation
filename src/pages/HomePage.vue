@@ -1,12 +1,6 @@
 <template>
     <!-- home -->
-    <section
-        class="home"
-        :style="{
-            background:
-                'linear-gradient(#00000060, #00000060),' + background + 'center / cover no-repeat',
-        }"
-    >
+    <section class="home" :style="{ background }">
         <section class="home-container">
             <!-- home-introduce -->
             <div class="home-introduce">
@@ -15,12 +9,12 @@
                         v-model:modelValue="backgroundIndex"
                         :options="backgroundFormatOptions"
                         name="background"
-                    ></BaseCarouselIndicators>
+                    />
                 </HomePageIntroduce>
             </div>
             <!-- home-room-list -->
             <div class="home-room-list">
-                <HomePageRoomList :rooms="rooms"></HomePageRoomList>
+                <HomePageRoomList :rooms="rooms" />
             </div>
         </section>
     </section>
@@ -77,9 +71,10 @@
                 id: item.id,
                 value: item.id,
             }))
+
             const background = computed(() => {
                 const url = backgroundOptions.find((item) => item.id == backgroundIndex.value)
-                return `url(${url.url})`
+                return `linear-gradient(#00000060, #00000060), url(${url.url}) center / cover no-repeat`
             })
 
             return {
