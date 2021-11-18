@@ -115,7 +115,7 @@
         },
         emits: ['submit-form', 'toggle-show'],
         setup(props, { emit }) {
-            const roomGuest = useRoomGuest(props.room)
+            const { roomGuest } = useRoomGuest(props.room)
             const form = ref({
                 name: '',
                 phone: '',

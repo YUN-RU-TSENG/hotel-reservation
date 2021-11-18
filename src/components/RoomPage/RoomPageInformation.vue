@@ -1,11 +1,14 @@
 <template>
     <!-- room-introduce-advertise -->
-    <p class="room-introduce-advertise">
-        {{ roomGuest }}人・ {{ room.descriptionShort.Bed[0] }} 床
-        {{ room.amenities.Breakfast ? '・附早餐・' : '・' }}衛浴{{
-            room.descriptionShort['Private-Bath']
-        }}間・{{ room.descriptionShort.Footage }} 平方公尺
-    </p>
+    <h2 class="room-introduce-name">
+        <p>{{ room.name }}</p>
+        <p>
+            {{ roomGuest }}人・ {{ room.descriptionShort.Bed[0] }} 床
+            {{ room.amenities.Breakfast ? '・附早餐・' : '・' }}衛浴{{
+                room.descriptionShort['Private-Bath']
+            }}間・{{ room.descriptionShort.Footage }} 平方公尺
+        </p>
+    </h2>
     <!-- room-introduce-time -->
     <ul class="room-introduce-time">
         <li>
@@ -31,7 +34,7 @@
                 </div>
                 <div class="state">
                     <SvgIcon
-                        :name="item[0] ? 'icon1' : 'icon2'"
+                        :name="item[1] ? 'icon1' : 'icon2'"
                         width="15px"
                         height="15px"
                     ></SvgIcon>
@@ -56,7 +59,7 @@
         setup(props) {
             const introduceList = props.room.description.split('. ')
             const amenities = Object.entries(props.room.amenities)
-            const roomGuest = useRoomGuest(props.room)
+            const { roomGuest } = useRoomGuest(props.room)
             const formatTime = (time) => {
                 return time.replace(/(\d{2})(:)(\d{2})/g, '$1：$3')
             }
@@ -88,11 +91,19 @@
 <style lang="scss" scoped>
     //==============================================================================
     // rroom-introduce-advertise
-    .room-introduce-advertise {
-        text-align: right;
-        margin-bottom: 47px;
-        font-size: 14px;
-        font-weight: normal;
+    .room-introduce-name {
+        display: flex;
+        margin-bottom: 38px;
+        color: #38470b;
+        align-items: flex-end;
+        justify-content: space-between;
+        & p:nth-of-type(1) {
+            font: normal normal 600 40px/55px 'Open Sans';
+        }
+        & p:nth-of-type(2) {
+            padding-bottom: 10px;
+            font: normal normal 600 14px/20px 'Noto Sans TC';
+        }
     }
 
     //==============================================================================
