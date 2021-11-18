@@ -44,18 +44,18 @@
     </section>
     <!-- room-introduce-datepicker -->
     <h2 class="room-introduce-title">空房狀態查詢</h2>
-    <BaseDatePicker></BaseDatePicker>
+    <RoomPageSearchReserveDays :booking="booking" />
 </template>
 
 <script>
     import SvgIcon from '../SvgIcon.vue'
     import BaseList from '../Base/BaseList.vue'
-    import BaseDatePicker from '../Base/BaseDatePicker.vue'
+    import RoomPageSearchReserveDays from '../RoomPage/RoomPageSearchReserveDays.vue'
     import useRoomGuest from '../../composables/roomPages/useRoomGuest'
 
     export default {
-        components: { SvgIcon, BaseList, BaseDatePicker },
-        props: { room: { type: Object, required: true } },
+        components: { SvgIcon, BaseList, RoomPageSearchReserveDays },
+        props: { room: { type: Object, required: true }, booking: { type: Array, required: true } },
         setup(props) {
             const introduceList = props.room.description.split('. ')
             const amenities = Object.entries(props.room.amenities)

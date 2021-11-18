@@ -113,10 +113,14 @@
         components: {
             SvgIcon,
         },
-        setup() {
+        props: {
+            begin: { type: String, default: dayjs().format('YYYY-MM-DD') },
+            end: { type: String, default: dayjs().add(1, 'day').format('YYYY-MM-DD') },
+        },
+        setup(props, { emit }) {
             const today = dayjs()
             const { beginDate, beginDateFormat, endDate, endDateFormat, changeSeletDate } =
-                useSelectDates()
+                useSelectDates(props, emit)
             const {
                 beginMonth,
                 beginMonthFormat,
@@ -138,7 +142,7 @@
             // calculate style class
             const calculateFlexItem = (month) => {
                 const firstDay = dayjs([month.value.year(), month.value.month(), 1]).day()
-                return firstDay >= 1 ? Array(firstDay - 1).fill(0) : []
+                return firstDay >= 1 ? Array(firstDay).fill(0) : []
             }
 
             const beginMonthFlexItem = computed(() => calculateFlexItem(beginMonth))
@@ -146,17 +150,25 @@
 
             const dateStyle = (year, month, date) => {
                 const currentDate = dayjs([year, month, date])
-
-                return !beginDate.value && !endDate.value
-                    ? {
-                          over: currentDate.isBefore(today),
-                      }
-                    : {
-                          begin: currentDate.isSame(beginDate.value),
-                          end: currentDate.isSame(endDate.value),
-                          range: currentDate.isBetween(beginDate.value, endDate.value),
-                          over: currentDate.isBefore(today),
-                      }
+                if (!beginDate.value && !endDate.value) {
+                    return {
+                        over: currentDate.isBefore(today, 'day'),
+                    }
+                }
+                if (beginDate.value && !endDate.value) {
+                    return {
+                        begin: currentDate.isSame(beginDate.value, 'day'),
+                        over: currentDate.isBefore(today, 'day'),
+                    }
+                }
+                if (beginDate.value && endDate.value) {
+                    return {
+                        begin: currentDate.isSame(beginDate.value, 'day'),
+                        end: currentDate.isSame(endDate.value, 'day'),
+                        range: currentDate.isBetween(beginDate.value, endDate.value),
+                        over: currentDate.isBefore(today, 'day'),
+                    }
+                }
             }
 
             return {
@@ -247,10 +259,28 @@
         }
     }
 
-    function useSelectDates() {
+    function useSelectDates(props, emit) {
         const today = dayjs()
-        const beginDate = ref(null)
-        const endDate = ref(null)
+        const beginDate = computed({
+            get() {
+                if (!props.begin) return
+                return dayjs(props.begin)
+            },
+            set(value) {
+                if (!value) return emit('update:begin')
+                emit('update:begin', value.format('YYYY-MM-DD'))
+            },
+        })
+        const endDate = computed({
+            get() {
+                if (!props.end) return
+                return dayjs(props.end)
+            },
+            set(value) {
+                if (!value) return emit('update:end')
+                emit('update:end', value.format('YYYY-MM-DD'))
+            },
+        })
 
         const formateDate = (date) => {
             return date.value ? date.value.format('YYYY-MM-DD') : ''
@@ -265,20 +295,19 @@
          * @param {number} date
          */
         const changeSeletDate = (year, month, date) => {
-            const selectedDate = dayjs([year, month, date])
+            const selectedDate = dayjs([year, month, date, 1])
 
-            if (!selectedDate.isAfter(today)) return
+            if (selectedDate.isBefore(today, 'day')) return
             if (!beginDate.value && !endDate.value) {
                 beginDate.value = selectedDate
                 return
             }
             if (beginDate.value && endDate.value) {
-                endDate.value = null
                 beginDate.value = selectedDate
+                endDate.value = ''
                 return
             }
-
-            if (!selectedDate.isSameOrBefore(beginDate.value)) endDate.value = selectedDate
+            if (selectedDate.isAfter(beginDate.value, 'day')) endDate.value = selectedDate
         }
 
         return {

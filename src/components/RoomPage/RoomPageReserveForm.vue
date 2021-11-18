@@ -42,10 +42,10 @@
                 }}
             </li>
         </ul>
-        <div class="room-feature row">
-            <div v-for="item of amenities" :key="item.key" class="room-feature-item col">
+        <div class="room-amenities row">
+            <div v-for="item of amenities" :key="item.key" class="room-amenities-item col">
                 <SvgIcon :name="item[0]" width="30" height="30"></SvgIcon>
-                <span>{{ featureChinese[item[0]] }}</span>
+                <span>{{ amenitiesChinese[item[0]] }}</span>
             </div>
         </div>
         <h3><span>訂房資訊</span></h3>
@@ -101,6 +101,7 @@
 <script>
     import SvgIcon from '../SvgIcon.vue'
     import BaseList from '../Base/BaseList.vue'
+    import useRoomPrice from '../../composables/roomPages/useRoomPrice'
     import useRoomGuest from '../../composables/roomPages/useRoomGuest'
     import { computed, ref, watchEffect } from 'vue'
     import dayjs from 'dayjs'
@@ -108,13 +109,13 @@
     export default {
         components: { SvgIcon, BaseList },
         props: {
-            price: { type: Number, required: true },
             room: { type: Object, required: true },
             isSubmitingReserveForm: { type: Boolean, required: true },
             isShowReserveForm: { type: Boolean, required: true },
         },
         emits: ['submit-form', 'toggle-show'],
         setup(props, { emit }) {
+            const { roomPrice } = useRoomPrice(props.room)
             const { roomGuest } = useRoomGuest(props.room)
             const form = ref({
                 name: '',
@@ -135,7 +136,7 @@
                         return dayjs(begindate).add(index, 'day').format('YYYY-MM-DD')
                     })
             }
-            const totalPrice = computed(() => props.price * totalDates.value)
+            const totalPrice = computed(() => roomPrice.value * totalDates.value)
             const submitForm = () => {
                 emit('submit-form', {
                     name: form.value.name,
@@ -144,7 +145,7 @@
                 })
             }
             const amenities = computed(() =>
-                Object.entries(props.room.amenities).filter((item) => item.value)
+                Object.entries(props.room.amenities).filter((item) => item[1])
             )
 
             watchEffect(() => {
@@ -164,7 +165,8 @@
                 submitForm,
                 amenities,
                 roomGuest,
-                featureChinese: {
+                roomPrice,
+                amenitiesChinese: {
                     'Wi-Fi': 'Wi-Fi',
                     Breakfast: '早餐',
                     'Mini-Bar': 'Mini Bar',
@@ -323,19 +325,19 @@
             }
         }
 
-        .room-feature {
+        .room-amenities {
             text-align: center;
             margin-bottom: 26px;
             padding: 0px 10px;
         }
 
-        .room-feature.row {
+        .room-amenities.row {
             display: flex;
             flex-wrap: wrap;
             gap: normal 10px;
         }
 
-        .room-feature-item {
+        .room-amenities-item {
             font: normal normal normal 12px/15px 'Noto Sans TC';
             color: #949c7c;
             svg {
@@ -348,7 +350,7 @@
             }
         }
 
-        .room-feature-item.col {
+        .room-amenities-item.col {
             flex: 0 1 50px;
         }
 

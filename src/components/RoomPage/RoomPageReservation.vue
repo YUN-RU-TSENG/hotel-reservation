@@ -10,7 +10,7 @@
         <!-- reservation-price -->
         <section class="room-reservation-price">
             <p>
-                <span>${{ price }}</span>
+                <span>${{ roomPrice }}</span>
                 <span>/</span>
                 <span>1晚</span>
             </p>
@@ -23,14 +23,16 @@
 <script>
     import SvgIcon from '../SvgIcon.vue'
     import BaseButton from '../Base/BaseButton.vue'
+    import useRoomPrice from '../../composables/roomPages/useRoomPrice'
 
     export default {
         components: { SvgIcon, BaseButton },
-        props: { price: { type: Number, required: true } },
+        props: { room: { type: Object, required: true } },
         emits: ['toggle-show'],
-        setup(_, { emit }) {
+        setup(props, { emit }) {
+            const { roomPrice } = useRoomPrice(props.room)
             const toggleShow = () => emit('toggle-show')
-            return { toggleShow }
+            return { toggleShow, roomPrice }
         },
     }
 </script>

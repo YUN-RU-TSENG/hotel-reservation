@@ -52,8 +52,36 @@ describe('Component BaseDatePicker', () => {
     it('should select range, when click day', async () => {
         const wrapper = mount(BaseDatePicker)
 
+        // set begin date
         await wrapper.get('[data-test="date"]:not(.over)').trigger('click')
-        await wrapper.get('[data-test="date"]:not(.over) + [data-test="date"]').trigger('click')
+
+        expect(wrapper.emitted()).toHaveProperty('update:begin')
+
+        //set end date
+        await wrapper.setProps({ begin: dayjs().format('YYYY-MM-DD'), end: '' })
+        await wrapper
+            .get('[data-test="date"]:not(.over) + [data-test="date"] + [data-test="date"]')
+            .trigger('click')
+
+        expect(wrapper.emitted()).toHaveProperty('update:end')
+
+        // reSelect begin date
+        await wrapper.setProps({
+            begin: dayjs().add(10, 'day').format('YYYY-MM-DD'),
+            end: dayjs().add(1, 'day').format('YYYY-MM-DD'),
+        })
+        await wrapper.get('[data-test="date"]:not(.over)').trigger('click')
+
+        expect(wrapper.emitted('update:begin').length).toBe(2)
+    })
+
+    it('should add class to select range', async () => {
+        const wrapper = mount(BaseDatePicker, {
+            props: {
+                begin: dayjs().format('YYYY-MM-DD'),
+                end: dayjs().add(1, 'day').format('YYYY-MM-DD'),
+            },
+        })
 
         expect(wrapper.get('[data-test="date"]:not(.over)').classes('begin')).toBe(true)
         expect(
@@ -65,6 +93,10 @@ describe('Component BaseDatePicker', () => {
         const wrapper = mount(BaseDatePicker)
 
         await wrapper.get('[data-test="reset"]').trigger('click')
+        await wrapper.setProps({
+            begin: '',
+            end: '',
+        })
 
         expect(wrapper.get('[data-test="date"]:not(.over)').classes('begin')).toBe(false)
         expect(

@@ -5,19 +5,19 @@
         <section v-if="room.id" class="room-reservation" :style="{ background }">
             <RoomPageReservation
                 class="room-reservation-container"
-                :price="roomPrice"
+                :room="room"
                 @toggle-show="isShowReserveForm = true"
             >
                 <BaseCarouselIndicators
                     v-model:modelValue="currentBackground"
                     :options="backgroundFormatOptions"
                     name="background-room"
-                ></BaseCarouselIndicators>
+                />
             </RoomPageReservation>
         </section>
         <!-- rooom-introduce -->
         <section class="room-introduce">
-            <RoomPageInformation v-if="room.id" :room="room" />
+            <RoomPageInformation v-if="room.id" :room="room" :booking="booking" />
         </section>
     </section>
     <!-- popover -->
@@ -29,16 +29,15 @@
     >
         <RoomPageReserveForm
             :room="room"
-            :price="roomPrice"
             :is-submiting-reserve-form="isSubmitingReserveForm"
             :is-show-reserve-form="isShowReserveForm"
             @submit-form="submitReserveForm"
-        ></RoomPageReserveForm>
+        />
     </RoomPagePopover>
     <!-- popover -->
     <!-- room-page-popover-result -->
     <RoomPagePopover v-if="room.id" v-model:show="isShowResult" class="room-page-popover-result">
-        <RoomPageResult :result="reserveResult"></RoomPageResult>
+        <RoomPageResult :result="reserveResult" />
     </RoomPagePopover>
 </template>
 
@@ -51,7 +50,6 @@
     import BaseCarouselIndicators from '../components/Base/BaseCarouselIndicators.vue'
     import { ref, computed } from 'vue'
     import { useRoute } from 'vue-router'
-    // import { useRoute, onBeforeRouteUpdate } from 'vue-router'
     import axios from 'axios'
 
     const api = axios.create({
@@ -75,14 +73,17 @@
         async beforeRouteEnter(to, from, next) {
             try {
                 const { data } = await api.get(`/room/${to.params.id}`)
-                next((vm) => (vm.room = data.room[0]))
+                next((vm) => {
+                    vm.room = data.room[0]
+                    vm.booking = data.booking
+                })
             } catch (error) {
                 console.error(error)
             }
         },
         setup() {
+            const booking = ref([])
             const { room } = useRoom()
-            const { roomPrice } = useRoomPrice(room)
             const { background, currentBackground, backgroundFormatOptions } =
                 useBackgroundStyle(room)
 
@@ -109,11 +110,11 @@
             }
 
             return {
+                booking,
                 background,
                 currentBackground,
                 backgroundFormatOptions,
                 room,
-                roomPrice,
                 isShowReserveForm,
                 isShowResult,
                 isReserveSuccess,
@@ -125,7 +126,7 @@
     }
 
     function useBackgroundStyle(room) {
-        const currentBackground = ref(1)
+        const currentBackground = ref(0)
         const backgroundOptions = computed(() =>
             room.value?.imageUrl?.map((item, index) => ({ id: index, url: item }))
         )
@@ -155,22 +156,6 @@
 
         return {
             room,
-        }
-    }
-
-    function useRoomPrice(room) {
-        const isHoliday = () => {
-            const today = new Date()
-            if (today.getDay() === 0 || today.getDay() === 6) return true
-            else return false
-        }
-
-        const roomPrice = computed(() =>
-            isHoliday() ? room.value?.holidayPrice : room.value?.normalDayPrice
-        )
-
-        return {
-            roomPrice,
         }
     }
 </script>
