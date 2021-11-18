@@ -7,9 +7,7 @@ export default function useRoomPrice(room) {
         else return false
     }
 
-    const roomPrice = computed(() =>
-        isHoliday() ? room.value?.holidayPrice : room.value?.normalDayPrice
-    )
+    const roomPrice = computed(() => (isHoliday() ? room?.holidayPrice : room?.normalDayPrice))
 
     return {
         roomPrice,
