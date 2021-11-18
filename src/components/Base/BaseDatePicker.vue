@@ -267,7 +267,7 @@
                 return dayjs(props.begin)
             },
             set(value) {
-                if (!value) return emit('update:begin')
+                if (!value) return emit('update:begin', '')
                 emit('update:begin', value.format('YYYY-MM-DD'))
             },
         })
@@ -277,7 +277,7 @@
                 return dayjs(props.end)
             },
             set(value) {
-                if (!value) return emit('update:end')
+                if (!value) return emit('update:end', '')
                 emit('update:end', value.format('YYYY-MM-DD'))
             },
         })
