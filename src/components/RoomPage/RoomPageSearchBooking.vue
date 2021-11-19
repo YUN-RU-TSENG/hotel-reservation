@@ -10,7 +10,7 @@
     import useCalculateReserveDays from '../../composables/roomPages/useCalculateReserveDays'
 
     export default {
-        name: 'RoomPageSearchReserveDays',
+        name: 'RoomPageSearchBooking',
         components: {
             BaseDatePicker,
         },

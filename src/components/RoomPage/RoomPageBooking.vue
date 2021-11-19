@@ -1,14 +1,14 @@
 <template>
     <div>
-        <!-- reservation-goback -->
+        <!-- booking-goback -->
         <router-link v-slot="{ navigate }" :to="{ name: 'home' }" custom>
-            <a href class="room-reservation-goback" @click="navigate">
+            <a href class="room-booking-goback" @click="navigate">
                 <SvgIcon name="icon15" width="8.31px" height="15.87px"></SvgIcon>
                 <span>查看其他房型</span>
             </a>
         </router-link>
-        <!-- reservation-price -->
-        <section class="room-reservation-price">
+        <!-- booking-price -->
+        <section class="room-booking-price">
             <p>
                 <span>${{ roomPrice }}</span>
                 <span>/</span>
@@ -38,7 +38,7 @@
 </script>
 
 <style lang="scss" scoped>
-    .room-reservation-goback {
+    .room-booking-goback {
         display: inline-block;
         font-size: 0;
         text-decoration: none;
@@ -57,7 +57,7 @@
         }
     }
 
-    .room-reservation-price {
+    .room-booking-price {
         padding-left: 33px;
         color: #38470b;
         text-align: center;

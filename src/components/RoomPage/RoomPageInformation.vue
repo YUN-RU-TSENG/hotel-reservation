@@ -44,17 +44,17 @@
     </section>
     <!-- room-introduce-datepicker -->
     <h2 class="room-introduce-title">空房狀態查詢</h2>
-    <RoomPageSearchReserveDays :booking="booking" />
+    <RoomPageSearchBooking :booking="booking" />
 </template>
 
 <script>
     import SvgIcon from '../SvgIcon.vue'
     import BaseList from '../Base/BaseList.vue'
-    import RoomPageSearchReserveDays from '../RoomPage/RoomPageSearchReserveDays.vue'
+    import RoomPageSearchBooking from '../RoomPage/RoomPageSearchBooking.vue'
     import useRoomGuest from '../../composables/roomPages/useRoomGuest'
 
     export default {
-        components: { SvgIcon, BaseList, RoomPageSearchReserveDays },
+        components: { SvgIcon, BaseList, RoomPageSearchBooking },
         props: { room: { type: Object, required: true }, booking: { type: Array, required: true } },
         setup(props) {
             const introduceList = props.room.description.split('. ')
@@ -97,10 +97,15 @@
         color: #38470b;
         align-items: flex-end;
         justify-content: space-between;
+        gap: normal 20px;
+
         & p:nth-of-type(1) {
+            flex: 0 0 auto;
             font: normal normal 600 40px/55px 'Open Sans';
         }
+
         & p:nth-of-type(2) {
+            flex: 0 1 auto;
             padding-bottom: 10px;
             font: normal normal 600 14px/20px 'Noto Sans TC';
         }

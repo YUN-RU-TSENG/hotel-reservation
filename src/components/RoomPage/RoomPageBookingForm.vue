@@ -3,15 +3,15 @@
     <section class="reserve-form">
         <form @submit.prevent="submitForm">
             <label for="customer-name">姓名</label>
-            <input id="customer-name" v-model.trim="form.name" type="text" required />
+            <input id="customer-name" v-model.trim="name" type="text" required />
             <label for="customer-phone">手機號碼</label>
-            <input id="customer-phone" v-model.trim="form.phone" type="tel" required />
+            <input id="customer-phone" v-model.trim="phone" type="tel" required />
             <label for="customer-begin-date">入住日期</label>
-            <input id="customer-begin-date" v-model="form.beginDate" type="date" required />
+            <input id="customer-begin-date" v-model="beginDate" type="date" required />
             <label for="customer-end-date">退房日期</label>
-            <input id="customer-end-date" v-model="form.endDate" type="date" required />
+            <input id="customer-end-date" v-model="endDate" type="date" required />
             <p class="total">
-                {{ totalDates }} 天，{{ totalDates === 0 ? 0 : totalDates - 1 }} 晚平日
+                {{ totalStayDays.length }} 天，{{ totalStayNormalDaysLength }} 晚平日
             </p>
             <div class="line"></div>
             <div class="price">
@@ -103,69 +103,54 @@
     import BaseList from '../Base/BaseList.vue'
     import useRoomPrice from '../../composables/roomPages/useRoomPrice'
     import useRoomGuest from '../../composables/roomPages/useRoomGuest'
-    import { computed, ref, watchEffect } from 'vue'
-    import dayjs from 'dayjs'
+    import { computed } from 'vue'
+    import useForm from '../../composables/roomPages/useForm'
+    import useTotalStayDays from '../../composables/roomPages/useTotalStayDays'
+    import useTotalStayPrice from '../../composables/roomPages/useTotalStayPrice'
 
     export default {
         components: { SvgIcon, BaseList },
         props: {
+            bookingForm: { type: Object, required: true },
             room: { type: Object, required: true },
             isSubmitingReserveForm: { type: Boolean, required: true },
             isShowReserveForm: { type: Boolean, required: true },
         },
-        emits: ['submit-form', 'toggle-show'],
+        emits: ['submit-form', 'toggle-show', 'update:bookingForm'],
         setup(props, { emit }) {
+            const { name, phone, beginDate, endDate } = useForm(props, emit)
             const { roomPrice } = useRoomPrice(props.room)
             const { roomGuest } = useRoomGuest(props.room)
-            const form = ref({
-                name: '',
-                phone: '',
-                beginDate: null,
-                endDate: null,
-            })
-            const totalDates = computed(() => {
-                return form.value.beginDate && form.value.endDate
-                    ? Math.abs(dayjs(form.value.beginDate).diff(dayjs(form.value.endDate), 'day'))
-                    : 0
-            })
-            const totalDatesFormat = (begindate, enddate) => {
-                const total = Math.abs(dayjs(begindate).diff(dayjs(enddate), 'day'))
-                return Array(total)
-                    .fill(0)
-                    .map((_, index) => {
-                        return dayjs(begindate).add(index, 'day').format('YYYY-MM-DD')
-                    })
-            }
-            const totalPrice = computed(() => roomPrice.value * totalDates.value)
+            const { totalStayDays, totalStayNormalDaysLength } = useTotalStayDays(
+                beginDate,
+                endDate
+            )
+            const { totalPrice } = useTotalStayPrice(
+                props,
+                totalStayDays,
+                totalStayNormalDaysLength
+            )
+
             const submitForm = () => {
-                emit('submit-form', {
-                    name: form.value.name,
-                    tel: form.value.phone,
-                    date: totalDatesFormat(form.value.beginDate, form.value.endDate),
-                })
+                emit('submit-form')
             }
+
             const amenities = computed(() =>
                 Object.entries(props.room.amenities).filter((item) => item[1])
             )
 
-            watchEffect(() => {
-                if (props.isShowReserveForm === false)
-                    form.value = {
-                        name: '',
-                        phone: '',
-                        beginDate: null,
-                        endDate: null,
-                    }
-            })
-
             return {
-                form,
+                name,
+                phone,
+                endDate,
+                beginDate,
                 totalPrice,
-                totalDates,
+                totalStayDays,
                 submitForm,
                 amenities,
                 roomGuest,
                 roomPrice,
+                totalStayNormalDaysLength,
                 amenitiesChinese: {
                     'Wi-Fi': 'Wi-Fi',
                     Breakfast: '早餐',

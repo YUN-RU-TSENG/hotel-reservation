@@ -1,10 +1,10 @@
 <template>
     <!-- room -->
     <section class="room">
-        <!-- rooom-reservation -->
-        <section v-if="room.id" class="room-reservation" :style="{ background }">
-            <RoomPageReservation
-                class="room-reservation-container"
+        <!-- rooom-booking -->
+        <section v-if="room.id" class="room-booking" :style="{ background }">
+            <RoomPageBooking
+                class="room-booking-container"
                 :room="room"
                 @toggle-show="isShowReserveForm = true"
             >
@@ -13,10 +13,10 @@
                     :options="backgroundFormatOptions"
                     name="background-room"
                 />
-            </RoomPageReservation>
+            </RoomPageBooking>
         </section>
-        <!-- rooom-introduce -->
         <section class="room-introduce">
+            <!-- rooom-introduce -->
             <RoomPageInformation v-if="room.id" :room="room" :booking="booking" />
         </section>
     </section>
@@ -27,7 +27,8 @@
         v-model:show="isShowReserveForm"
         class="room-page-popover-reserve"
     >
-        <RoomPageReserveForm
+        <RoomPageBookingForm
+            v-model:bookingForm="bookingForm"
             :room="room"
             :is-submiting-reserve-form="isSubmitingReserveForm"
             :is-show-reserve-form="isShowReserveForm"
@@ -42,14 +43,16 @@
 </template>
 
 <script>
-    import RoomPageReservation from '../components/RoomPage/RoomPageReservation.vue'
+    import RoomPageBooking from '../components/RoomPage/RoomPageBooking.vue'
+    import RoomPageBookingForm from '../components/RoomPage/RoomPageBookingForm.vue'
     import RoomPageInformation from '../components/RoomPage/RoomPageInformation.vue'
     import RoomPagePopover from '../components/RoomPage/RoomPagePopover.vue'
-    import RoomPageReserveForm from '../components/RoomPage/RoomPageReserveForm.vue'
     import RoomPageResult from '../components/RoomPage/RoomPageResult.vue'
     import BaseCarouselIndicators from '../components/Base/BaseCarouselIndicators.vue'
+
     import { ref, computed } from 'vue'
     import { useRoute } from 'vue-router'
+
     import axios from 'axios'
 
     const api = axios.create({
@@ -63,10 +66,10 @@
 
     export default {
         components: {
-            RoomPageReservation,
-            RoomPageInformation,
-            RoomPageReserveForm,
+            RoomPageBooking,
             RoomPagePopover,
+            RoomPageInformation,
+            RoomPageBookingForm,
             RoomPageResult,
             BaseCarouselIndicators,
         },
@@ -89,6 +92,12 @@
 
             const route = useRoute()
 
+            const bookingForm = ref({
+                name: '',
+                phone: '',
+                beginDate: '',
+                endDate: '',
+            })
             const isShowReserveForm = ref(false)
             const isShowResult = ref(false)
             const isReserveSuccess = ref(null)
@@ -115,6 +124,7 @@
                 currentBackground,
                 backgroundFormatOptions,
                 room,
+                bookingForm,
                 isShowReserveForm,
                 isShowResult,
                 isReserveSuccess,
@@ -167,14 +177,14 @@
     }
 
     //==============================================================================
-    // room-reservation
-    .room-reservation {
+    // room-booking
+    .room-booking {
         flex: 0 1 41.94%;
         background-size: cover;
         background-position: center;
     }
 
-    .room-reservation-container {
+    .room-booking-container {
         height: 768px;
         display: flex;
         flex-direction: column;
