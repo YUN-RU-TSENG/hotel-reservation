@@ -44,17 +44,17 @@
     </section>
     <!-- room-introduce-datepicker -->
     <h2 class="room-introduce-title">空房狀態查詢</h2>
-    <RoomPageSearchBooking :booking="booking" />
+    <RoomSearchBooking :booking="booking" />
 </template>
 
 <script>
     import SvgIcon from '../SvgIcon.vue'
     import BaseList from '../Base/BaseList.vue'
-    import RoomPageSearchBooking from '../RoomPage/RoomPageSearchBooking.vue'
-    import useRoomGuest from '../../composables/roomPages/useRoomGuest'
+    import RoomSearchBooking from '../Room/RoomSearchBooking.vue'
+    import useRoomGuest from '../../composables/room/useRoomGuest'
 
     export default {
-        components: { SvgIcon, BaseList, RoomPageSearchBooking },
+        components: { SvgIcon, BaseList, RoomSearchBooking },
         props: { room: { type: Object, required: true }, booking: { type: Array, required: true } },
         setup(props) {
             const introduceList = props.room.description.split('. ')
@@ -89,8 +89,8 @@
 </script>
 
 <style lang="scss" scoped>
-    //==============================================================================
-    // rroom-introduce-advertise
+    //====================
+    // room-introduce-advertise
     .room-introduce-name {
         display: flex;
         margin-bottom: 38px;
@@ -111,7 +111,7 @@
         }
     }
 
-    //==============================================================================
+    //====================
     // room-introduce-time
     .room-introduce-time {
         margin-bottom: 35px;
@@ -122,13 +122,13 @@
         }
     }
 
-    //==============================================================================
+    //====================
     // room-introduce-service
     .room-introduce-service {
         margin-bottom: 35px;
     }
 
-    //==============================================================================
+    //====================
     // room-introduce-feature
     .room-introduce-feature {
         &.row {

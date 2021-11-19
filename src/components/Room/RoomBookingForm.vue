@@ -1,15 +1,19 @@
 <template>
-    <!-- reserve-form -->
-    <section class="reserve-form">
+    <!-- booking-form -->
+    <section class="booking-form">
         <form @submit.prevent="submitForm">
             <label for="customer-name">姓名</label>
-            <input id="customer-name" v-model.trim="name" type="text" required />
+            <input id="customer-name" v-model.trim="name" type="text" />
+            <p class="field-error">{{ nameError }}</p>
             <label for="customer-phone">手機號碼</label>
-            <input id="customer-phone" v-model.trim="phone" type="tel" required />
+            <input id="customer-phone" v-model.trim="phone" type="tel" />
+            <p class="field-error">{{ phoneError }}</p>
             <label for="customer-begin-date">入住日期</label>
-            <input id="customer-begin-date" v-model="beginDate" type="date" required />
+            <input id="customer-begin-date" v-model="beginDate" type="date" />
+            <p class="field-error">{{ beginDateError }}</p>
             <label for="customer-end-date">退房日期</label>
-            <input id="customer-end-date" v-model="endDate" type="date" required />
+            <input id="customer-end-date" v-model="endDate" type="date" />
+            <p class="field-error">{{ endDateError }}</p>
             <p class="total">
                 {{ totalStayDays.length }} 天，{{ totalStayNormalDaysLength }} 晚平日
             </p>
@@ -18,13 +22,13 @@
                 <p>總計</p>
                 <p>${{ totalPrice }}</p>
             </div>
-            <button type="submit" :disabled="isSubmitingReserveForm">確認送出</button>
+            <button type="submit">確認送出</button>
             <p class="tip">此預約系統僅預約功能，並不會對您進行收費</p>
         </form>
     </section>
-    <!-- reserve-information -->
-    <section class="reserve-information">
-        <h2>
+    <!-- booking-information -->
+    <section class="booking-information">
+        <h2 class="booking-title">
             <span>{{ room.name }}</span>
         </h2>
         <ul class="room-information">
@@ -48,7 +52,7 @@
                 <span>{{ amenitiesChinese[item[0]] }}</span>
             </div>
         </div>
-        <h3><span>訂房資訊</span></h3>
+        <h3 class="booking-title"><span>訂房資訊</span></h3>
         <BaseList
             class="qa-list"
             :font-size="12"
@@ -66,16 +70,16 @@
                 '若您有任何問題，歡迎撥打 03-8321155 ( 服務時間 週一至週六 10:00 - 18:00）',
             ]"
         />
-        <h3><span>預約流程</span></h3>
-        <div class="reserve row">
-            <div class="reserve-item col">
+        <h3 class="booking-title"><span>預約流程</span></h3>
+        <div class="booking row">
+            <div class="booking-item col">
                 <div><SvgIcon name="note" width="32.65" height="32.65"></SvgIcon></div>
                 <p>送出線上預約單</p>
             </div>
-            <div class="reserve-item col">
+            <div class="booking-item col">
                 <div><SvgIcon name="arrow" width="7.46" height="14.24"></SvgIcon></div>
             </div>
-            <div class="reserve-item col">
+            <div class="booking-item col">
                 <div><SvgIcon name="ask" width="32.65" height="32.65"></SvgIcon></div>
                 <p>
                     系統立即回覆是否預訂成功 <br />
@@ -83,10 +87,10 @@
                     (若未收到簡訊請來電確認)
                 </p>
             </div>
-            <div class="reserve-item col">
+            <div class="booking-item col">
                 <div><SvgIcon name="arrow" width="7.46" height="14.24"></SvgIcon></div>
             </div>
-            <div class="reserve-item col">
+            <div class="booking-item col">
                 <div><SvgIcon name="pay" width="32.65" height="32.65"></SvgIcon></div>
                 <p>
                     入住當日憑訂房通知 <br />
@@ -101,56 +105,87 @@
 <script>
     import SvgIcon from '../SvgIcon.vue'
     import BaseList from '../Base/BaseList.vue'
-    import useRoomPrice from '../../composables/roomPages/useRoomPrice'
-    import useRoomGuest from '../../composables/roomPages/useRoomGuest'
     import { computed } from 'vue'
-    import useForm from '../../composables/roomPages/useForm'
-    import useTotalStayDays from '../../composables/roomPages/useTotalStayDays'
-    import useTotalStayPrice from '../../composables/roomPages/useTotalStayPrice'
+    import { useRoute } from 'vue-router'
+    import useRoomPrice from '../../composables/room/useRoomPrice'
+    import useRoomGuest from '../../composables/room/useRoomGuest'
+    import useTotalStayDays from '../../composables/room/useTotalStayDays'
+    import useForm from '../../composables/room/useForm'
+    import api from '../../API/api'
 
     export default {
         components: { SvgIcon, BaseList },
         props: {
-            bookingForm: { type: Object, required: true },
             room: { type: Object, required: true },
-            isSubmitingReserveForm: { type: Boolean, required: true },
-            isShowReserveForm: { type: Boolean, required: true },
         },
-        emits: ['submit-form', 'toggle-show', 'update:bookingForm'],
+        emits: ['submit-form', 'update:show'],
         setup(props, { emit }) {
-            const { name, phone, beginDate, endDate } = useForm(props, emit)
+            const route = useRoute()
+            const {
+                name,
+                phone,
+                beginDate,
+                endDate,
+                nameError,
+                phoneError,
+                beginDateError,
+                endDateError,
+                handleSubmit,
+            } = useForm()
             const { roomPrice } = useRoomPrice(props.room)
             const { roomGuest } = useRoomGuest(props.room)
-            const { totalStayDays, totalStayNormalDaysLength } = useTotalStayDays(
+            const { totalStayDays, totalStayNormalDaysLength, totalPrice } = useTotalStayDays(
                 beginDate,
-                endDate
+                endDate,
+                props
             )
-            const { totalPrice } = useTotalStayPrice(
-                props,
-                totalStayDays,
-                totalStayNormalDaysLength
-            )
-
-            const submitForm = () => {
-                emit('submit-form')
-            }
 
             const amenities = computed(() =>
                 Object.entries(props.room.amenities).filter((item) => item[1])
             )
 
+            const submitForm = handleSubmit(async () => {
+                try {
+                    await api.post(`/room/${route.params.id}`, {
+                        name: name.value,
+                        tel: phone.value,
+                        date: totalStayDays.value,
+                    })
+
+                    emit('submit-form', {
+                        isSuccess: true,
+                        message: '成功預訂',
+                    })
+                } catch (error) {
+                    emit('submit-form', {
+                        isSuccess: false,
+                        message: error?.response?.data?.message || '異常錯誤',
+                    })
+                } finally {
+                    emit('update:show', false)
+                    name.value = ''
+                    phone.value = ''
+                    beginDate.value = ''
+                    endDate.value = ''
+                }
+            })
+
             return {
                 name,
                 phone,
-                endDate,
                 beginDate,
-                totalPrice,
+                endDate,
                 totalStayDays,
-                submitForm,
-                amenities,
+                totalStayNormalDaysLength,
+                totalPrice,
                 roomGuest,
                 roomPrice,
-                totalStayNormalDaysLength,
+                nameError,
+                phoneError,
+                beginDateError,
+                endDateError,
+                submitForm,
+                amenities,
                 amenitiesChinese: {
                     'Wi-Fi': 'Wi-Fi',
                     Breakfast: '早餐',
@@ -171,9 +206,9 @@
 </script>
 
 <style lang="scss" scoped>
-    //==============================================================================
-    // reserve-form
-    .reserve-form {
+    //====================
+    // booking-form
+    .booking-form {
         flex: 0 1 40.45%;
         padding: 50px 65px 25px 65px;
         background: #38470b;
@@ -198,7 +233,7 @@
             padding: 8px 10px;
             border: none;
             background: #fff;
-            margin-bottom: 16px;
+
             &:focus {
                 opacity: 0.9;
                 outline: 1px dotted #fff;
@@ -213,8 +248,14 @@
             transform: rotate(180deg) scale(0.6, 0.4);
         }
 
+        .field-error {
+            font: normal normal normal 12px/20px 'Noto Sans TC';
+            color: #f58787;
+            margin-bottom: 12px;
+        }
+
         .total {
-            font: normal normal normal 14px/20px Noto Sans TC;
+            font: normal normal normal 14px/20px 'Noto Sans TC';
             color: #949c7c;
             margin-bottom: 16px;
         }
@@ -263,15 +304,15 @@
         }
     }
 
-    //==============================================================================
-    // reserve-information
-    .reserve-information {
+    //====================
+    // booking-information
+    .booking-information {
         padding: 51px 94px 25px 30px;
         flex: 0 1 59.55%;
         border: 1px solid #38470b;
         background-color: #fff;
 
-        h2 {
+        .booking-title {
             font: normal normal bold 24px/33px 'Open Sans';
             color: #38470b;
             margin-bottom: 8px;
@@ -287,14 +328,18 @@
                 background-color: #949c7c;
                 z-index: 1;
             }
+
+            span {
+                position: relative;
+                display: inline-block;
+                background-color: #fff;
+                padding-right: 6px;
+                z-index: 2;
+            }
         }
 
-        h2 span {
-            position: relative;
-            display: inline-block;
-            background-color: #fff;
-            padding-right: 6px;
-            z-index: 2;
+        h2.booking-title {
+            font: normal normal bold 24px/33px 'Open Sans';
         }
 
         .qa-list {
@@ -339,43 +384,22 @@
             flex: 0 1 50px;
         }
 
-        h3 {
+        h3.booking-title {
             font: normal normal 500 16px/24px 'Noto Sans TC';
-            color: #38470b;
-            position: relative;
-            margin-bottom: 19px;
-
-            &:nth-of-type(1) {
-                margin-bottom: 12px;
-            }
-
-            &::after {
-                content: '';
-                display: block;
-                width: 100%;
+            &::before {
                 top: 12px;
-                position: absolute;
-                height: 1px;
-                background-color: #949c7c;
-                z-index: 1;
             }
         }
 
-        h3 span {
-            position: relative;
-            z-index: 2;
-            background-color: #fff;
-            padding-right: 6px;
-        }
-        .reserve {
+        .booking {
             font: normal normal normal 12px/18px 'Noto Sans TC';
         }
 
-        .reserve.row {
+        .booking.row {
             display: flex;
         }
 
-        .reserve-item {
+        .booking-item {
             text-align: center;
 
             &:nth-of-type(even) {
@@ -397,7 +421,7 @@
             }
         }
 
-        .reserve-item.col {
+        .booking-item.col {
             min-height: 136px;
 
             &:nth-of-type(even) {

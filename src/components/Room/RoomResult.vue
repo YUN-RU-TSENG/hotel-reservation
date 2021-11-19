@@ -1,16 +1,21 @@
 <template>
     <!-- submit-result- -->
     <section class="submit-result">
-        <SvgIcon :name="result" width="124.46" height="157.71"></SvgIcon>
-        <template v-if="result === 'fail'">
-            <h2>預約失敗</h2>
-            <p>哎呀！晚了一步！您預約的日期已經被預約走了， 再看看其它房型吧</p>
-        </template>
-        <template v-if="result === 'success'">
+        <SvgIcon
+            v-if="result.message"
+            :name="result.isSuccess ? 'success' : 'fail'"
+            width="124.46"
+            height="157.71"
+        ></SvgIcon>
+        <template v-if="result.isSuccess">
             <h2>預約成功</h2>
             <p>
                 請留意簡訊發送訂房通知，入住當日務必出示此訂房通知， 若未收到簡訊請來電確認，謝謝您
             </p>
+        </template>
+        <template v-else>
+            <h2>預約失敗</h2>
+            <p>{{ result.message }}</p>
         </template>
     </section>
 </template>
@@ -22,7 +27,7 @@
         components: { SvgIcon },
         props: {
             result: {
-                type: String,
+                type: Object,
                 required: true,
             },
         },

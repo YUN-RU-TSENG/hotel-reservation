@@ -23,7 +23,7 @@
 </script>
 
 <style lang="scss" scoped>
-    //==============================================================================
+    //====================
     // room-popover
     .room-popover {
         background: #ffffff50 0% 0% no-repeat padding-box;
@@ -36,7 +36,7 @@
         z-index: 99;
     }
 
-    //==============================================================================
+    //====================
     // room-popover-container
     .room-popover-container {
         position: relative;

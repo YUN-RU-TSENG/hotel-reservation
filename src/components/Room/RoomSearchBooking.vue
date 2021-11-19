@@ -7,10 +7,10 @@
     import { ref } from '@vue/reactivity'
     import BaseDatePicker from '../../components/Base/BaseDatePicker.vue'
     import dayjs from 'dayjs'
-    import useCalculateReserveDays from '../../composables/roomPages/useCalculateReserveDays'
+    import useCalculateBookingDays from '../../composables/room/useCalculateBookingDays'
 
     export default {
-        name: 'RoomPageSearchBooking',
+        name: 'RoomSearchBooking',
         components: {
             BaseDatePicker,
         },
@@ -19,7 +19,7 @@
             const begin = ref(dayjs().format('YYYY-MM-DD'))
             const end = ref(dayjs().add(1, 'day').format('YYYY-MM-DD'))
 
-            const { answer } = useCalculateReserveDays(begin, end, props)
+            const { answer } = useCalculateBookingDays(begin, end, props)
 
             return {
                 answer,

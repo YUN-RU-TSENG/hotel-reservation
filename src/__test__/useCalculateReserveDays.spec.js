@@ -1,12 +1,12 @@
-import useCalculateReserveDays from '../composables/roomPages/useCalculateReserveDays'
+import useCalculateBookingDays from '../composables/room/useCalculateBookingDays'
 import dayjs from 'dayjs'
 import { ref } from 'vue'
 
-describe('function useCalculateReserveDays(begin, end)', () => {
+describe('function useCalculateBookingDays(begin, end)', () => {
     it('should return nothing, begin and end is null', () => {
         const begin = ref('')
         const end = ref('')
-        const { answer } = useCalculateReserveDays(begin, end)
+        const { answer } = useCalculateBookingDays(begin, end)
 
         expect(answer.value).toBe('')
     })
@@ -15,7 +15,7 @@ describe('function useCalculateReserveDays(begin, end)', () => {
         const begin = ref(dayjs().format('YYYY-MM-DD'))
         const end = ref('')
 
-        const { answer } = useCalculateReserveDays(begin, end)
+        const { answer } = useCalculateBookingDays(begin, end)
 
         expect(answer.value).toBe('')
     })
@@ -38,7 +38,7 @@ describe('function useCalculateReserveDays(begin, end)', () => {
         const begin = ref(dayjs().format('YYYY-MM-DD'))
         const end = ref(dayjs().add(1, 'day').format('YYYY-MM-DD'))
 
-        const { answer } = useCalculateReserveDays(begin, end, props)
+        const { answer } = useCalculateBookingDays(begin, end, props)
 
         expect(answer.value).toBe(`日子 ${dayjs().format('YYYY-MM-DD')} 已被預訂`)
     })
@@ -50,7 +50,7 @@ describe('function useCalculateReserveDays(begin, end)', () => {
         const begin = ref(dayjs().format('YYYY-MM-DD'))
         const end = ref(dayjs().add(2, 'day').format('YYYY-MM-DD'))
 
-        const { answer } = useCalculateReserveDays(begin, end, props)
+        const { answer } = useCalculateBookingDays(begin, end, props)
 
         expect(answer.value).toBe('日子可以預訂')
     })
@@ -62,7 +62,7 @@ describe('function useCalculateReserveDays(begin, end)', () => {
         const begin = ref(dayjs().format('YYYY-MM-DD'))
         const end = ref(dayjs().add(100, 'day').format('YYYY-MM-DD'))
 
-        const { answer } = useCalculateReserveDays(begin, end, props)
+        const { answer } = useCalculateBookingDays(begin, end, props)
 
         expect(answer.value).toBe('選擇日期超過九十天')
     })

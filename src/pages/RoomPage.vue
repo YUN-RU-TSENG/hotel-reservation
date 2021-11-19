@@ -49,6 +49,7 @@
     import { ref } from 'vue'
 
     export default {
+        name: 'HomePage',
         components: {
             RoomBooking,
             RoomPopover,

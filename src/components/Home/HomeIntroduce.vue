@@ -11,7 +11,7 @@
 
 <script>
     export default {
-        name: 'HomePageIntroduce',
+        name: 'HomeIntroduce',
     }
 </script>
 

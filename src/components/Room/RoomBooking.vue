@@ -23,7 +23,7 @@
 <script>
     import SvgIcon from '../SvgIcon.vue'
     import BaseButton from '../Base/BaseButton.vue'
-    import useRoomPrice from '../../composables/roomPages/useRoomPrice'
+    import useRoomPrice from '../../composables/room/useRoomPrice'
 
     export default {
         components: { SvgIcon, BaseButton },

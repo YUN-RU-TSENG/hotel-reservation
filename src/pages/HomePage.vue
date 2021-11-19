@@ -4,17 +4,17 @@
         <section class="home-container">
             <!-- home-introduce -->
             <div class="home-introduce">
-                <HomePageIntroduce>
+                <HomeIntroduce>
                     <BaseCarouselIndicators
                         v-model:modelValue="backgroundIndex"
                         :options="backgroundFormatOptions"
                         name="background"
                     />
-                </HomePageIntroduce>
+                </HomeIntroduce>
             </div>
             <!-- home-room-list -->
             <div class="home-room-list">
-                <HomePageRoomList :rooms="rooms" />
+                <HomeRoomList :rooms="rooms" />
             </div>
         </section>
     </section>
@@ -26,26 +26,16 @@
     import bg2 from '../assets/images/house/bg2.png'
     import bg3 from '../assets/images/house/bg3.png'
     import bg4 from '../assets/images/house/bg4.png'
-    import HomePageIntroduce from '../components/HomePage/HomePageIntroduce.vue'
-    import HomePageRoomList from '../components/HomePage/HomePageRoomList.vue'
+    import HomeIntroduce from '../components/Home/HomeIntroduce.vue'
+    import HomeRoomList from '../components/Home/HomeRoomList.vue'
     import BaseCarouselIndicators from '../components/Base/BaseCarouselIndicators.vue'
-
-    import axios from 'axios'
-
-    const api = axios.create({
-        baseURL: 'https://challenge.thef2e.com/api/thef2e2019/stage6/',
-        timeout: 3000,
-        headers: {
-            Authorization: 'Bearer p2FP3rIsABET2oxPlvYOBSCkT4qb6XxJU3Rt19hjxfFyyDjoW1UFnQouCoBe',
-            Accept: 'application/json',
-        },
-    })
+    import api from '../API/api'
 
     export default {
         name: 'HomePage',
         components: {
-            HomePageIntroduce,
-            HomePageRoomList,
+            HomeIntroduce,
+            HomeRoomList,
             BaseCarouselIndicators,
         },
         setup() {
@@ -93,7 +83,7 @@
     }
 
     // home-container
-    //==============================================================================
+    //====================
     .home-container {
         display: flex;
         justify-content: space-between;
@@ -104,13 +94,13 @@
     }
 
     // home-introduce
-    //==============================================================================
+    //====================
     .home-introduce {
         padding: 10px 9px;
     }
 
     // home-room-list
-    //==============================================================================
+    //====================
     .home-room-list {
         // width: 100%;
     }
