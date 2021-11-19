@@ -2,13 +2,13 @@ import { computed } from '@vue/reactivity'
 import dayjs from 'dayjs'
 
 /**
- * calculate reserve days
+ * calculate booking days
  * @param {*} begin
  * @param {*} end
  * @param {*} props
  * @returns calculate result
  */
-function useCalculateReserveDays(begin, end, props) {
+function useCalculateBookingDays(begin, end, props) {
     const answer = computed(() => {
         if (!begin.value || !end.value) return ''
 
@@ -26,4 +26,4 @@ function useCalculateReserveDays(begin, end, props) {
     return { answer }
 }
 
-export default useCalculateReserveDays
+export default useCalculateBookingDays

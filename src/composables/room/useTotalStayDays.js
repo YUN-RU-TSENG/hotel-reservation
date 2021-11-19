@@ -1,7 +1,7 @@
 import { computed } from '@vue/reactivity'
 import dayjs from 'dayjs'
 
-export default function useTotalStayDays(beginDate, endDate) {
+export default function useTotalStayDays(beginDate, endDate, props) {
     const totalStayDays = computed(() => {
         return !beginDate.value || !endDate.value
             ? []
@@ -18,8 +18,15 @@ export default function useTotalStayDays(beginDate, endDate) {
             : totalStayDays.value.filter((day) => dayjs(day).day() > 1).length
     })
 
+    const totalPrice = computed(() => {
+        return (
+            props.room.normalDayPrice * totalStayNormalDaysLength.value +
+            props.room.holidayPrice * (totalStayDays.value.length - totalStayNormalDaysLength.value)
+        )
+    })
     return {
         totalStayDays,
         totalStayNormalDaysLength,
+        totalPrice,
     }
 }

@@ -3,74 +3,58 @@
     <section class="room">
         <!-- rooom-booking -->
         <section v-if="room.id" class="room-booking" :style="{ background }">
-            <RoomPageBooking
+            <RoomBooking
                 class="room-booking-container"
                 :room="room"
-                @toggle-show="isShowReserveForm = true"
+                @toggle-show="isShowBookingForm = true"
             >
                 <BaseCarouselIndicators
                     v-model:modelValue="currentBackground"
                     :options="backgroundFormatOptions"
                     name="background-room"
                 />
-            </RoomPageBooking>
+            </RoomBooking>
         </section>
         <section class="room-introduce">
             <!-- rooom-introduce -->
-            <RoomPageInformation v-if="room.id" :room="room" :booking="booking" />
+            <RoomInformation v-if="room.id" :room="room" :booking="booking" />
         </section>
     </section>
     <!-- popover -->
-    <!-- room-page-popover-reserve -->
-    <RoomPagePopover
-        v-if="room.id"
-        v-model:show="isShowReserveForm"
-        class="room-page-popover-reserve"
-    >
-        <RoomPageBookingForm
-            v-model:bookingForm="bookingForm"
+    <!-- room--popover-booking -->
+    <RoomPopover v-if="room.id" v-model:show="isShowBookingForm" class="room--popover-booking">
+        <RoomBookingForm
             :room="room"
-            :is-submiting-reserve-form="isSubmitingReserveForm"
-            :is-show-reserve-form="isShowReserveForm"
-            @submit-form="submitReserveForm"
+            @submit-form="updateBookingResult"
+            @update:show="isShowBookingForm = $event"
         />
-    </RoomPagePopover>
+    </RoomPopover>
     <!-- popover -->
-    <!-- room-page-popover-result -->
-    <RoomPagePopover v-if="room.id" v-model:show="isShowResult" class="room-page-popover-result">
-        <RoomPageResult :result="reserveResult" />
-    </RoomPagePopover>
+    <!-- room--popover-result -->
+    <RoomPopover v-if="room.id" v-model:show="isShowBookingResult" class="room--popover-result">
+        <RoomResult :result="bookingResult" />
+    </RoomPopover>
 </template>
 
 <script>
-    import RoomPageBooking from '../components/RoomPage/RoomPageBooking.vue'
-    import RoomPageBookingForm from '../components/RoomPage/RoomPageBookingForm.vue'
-    import RoomPageInformation from '../components/RoomPage/RoomPageInformation.vue'
-    import RoomPagePopover from '../components/RoomPage/RoomPagePopover.vue'
-    import RoomPageResult from '../components/RoomPage/RoomPageResult.vue'
+    import RoomBooking from '../components/Room/RoomBooking.vue'
+    import RoomBookingForm from '../components/Room/RoomBookingForm.vue'
+    import RoomInformation from '../components/Room/RoomInformation.vue'
+    import RoomPopover from '../components/Room/RoomPopover.vue'
+    import RoomResult from '../components/Room/RoomResult.vue'
     import BaseCarouselIndicators from '../components/Base/BaseCarouselIndicators.vue'
-
-    import { ref, computed } from 'vue'
-    import { useRoute } from 'vue-router'
-
-    import axios from 'axios'
-
-    const api = axios.create({
-        baseURL: 'https://challenge.thef2e.com/api/thef2e2019/stage6/',
-        timeout: 3000,
-        headers: {
-            Authorization: 'Bearer p2FP3rIsABET2oxPlvYOBSCkT4qb6XxJU3Rt19hjxfFyyDjoW1UFnQouCoBe',
-            Accept: 'application/json',
-        },
-    })
+    import useBackgroundStyle from '../composables/Room/useBackgroundStyle.js'
+    import useRoom from '../composables/room/useRoom.js'
+    import api from '../API/api'
+    import { ref } from 'vue'
 
     export default {
         components: {
-            RoomPageBooking,
-            RoomPagePopover,
-            RoomPageInformation,
-            RoomPageBookingForm,
-            RoomPageResult,
+            RoomBooking,
+            RoomPopover,
+            RoomInformation,
+            RoomBookingForm,
+            RoomResult,
             BaseCarouselIndicators,
         },
         async beforeRouteEnter(to, from, next) {
@@ -89,34 +73,13 @@
             const { room } = useRoom()
             const { background, currentBackground, backgroundFormatOptions } =
                 useBackgroundStyle(room)
-
-            const route = useRoute()
-
-            const bookingForm = ref({
-                name: '',
-                phone: '',
-                beginDate: '',
-                endDate: '',
-            })
-            const isShowReserveForm = ref(false)
-            const isShowResult = ref(false)
-            const isReserveSuccess = ref(null)
-            const reserveResult = computed(() => (isReserveSuccess.value ? 'success' : 'fail'))
-            const isSubmitingReserveForm = ref(false)
-            const submitReserveForm = async (formData) => {
-                try {
-                    isReserveSuccess.value = null
-                    isSubmitingReserveForm.value = true
-                    const { data } = await api.post(`/room/${route.params.id}`, formData)
-                    isReserveSuccess.value = data.success
-                } catch (err) {
-                    console.error(err)
-                } finally {
-                    isSubmitingReserveForm.value = false
-                    isShowReserveForm.value = false
-                    isShowResult.value = true
-                }
+            const bookingResult = ref({})
+            const updateBookingResult = (result) => {
+                bookingResult.value = result
+                isShowBookingResult.value = true
             }
+            const isShowBookingForm = ref(false)
+            const isShowBookingResult = ref(false)
 
             return {
                 booking,
@@ -124,49 +87,12 @@
                 currentBackground,
                 backgroundFormatOptions,
                 room,
-                bookingForm,
-                isShowReserveForm,
-                isShowResult,
-                isReserveSuccess,
-                reserveResult,
-                isSubmitingReserveForm,
-                submitReserveForm,
+                bookingResult,
+                updateBookingResult,
+                isShowBookingForm,
+                isShowBookingResult,
             }
         },
-    }
-
-    function useBackgroundStyle(room) {
-        const currentBackground = ref(0)
-        const backgroundOptions = computed(() =>
-            room.value?.imageUrl?.map((item, index) => ({ id: index, url: item }))
-        )
-        const backgroundFormatOptions = computed(() =>
-            backgroundOptions.value?.map(({ id }) => ({
-                id,
-                value: id,
-            }))
-        )
-        const background = computed(() => {
-            const data = backgroundOptions.value?.find(({ id }) => id == currentBackground.value)
-
-            return `linear-gradient(180deg, #ffffff10, #fff), center / cover no-repeat url(${
-                data?.url ?? ''
-            })`
-        })
-
-        return {
-            background,
-            currentBackground,
-            backgroundFormatOptions,
-        }
-    }
-
-    function useRoom() {
-        const room = ref({})
-
-        return {
-            room,
-        }
     }
 </script>
 
@@ -176,7 +102,7 @@
         align-items: flex-start;
     }
 
-    //==============================================================================
+    //====================
     // room-booking
     .room-booking {
         flex: 0 1 41.94%;
@@ -206,7 +132,7 @@
     }
 
     // room-introduce
-    //==============================================================================
+    //====================
     .room-introduce {
         max-width: 665px;
         margin-left: 30px;
@@ -215,17 +141,17 @@
         color: #38470b;
     }
 
-    // room-page-popover-reserve
-    //==============================================================================
-    .room-page-popover-reserve {
+    // room--popover-booking
+    //====================
+    .room--popover-booking {
         ::v-deep(.room-popover-container) {
             display: flex;
         }
     }
 
-    // room-page-popover-result
-    //==============================================================================
-    .room-page-popover-result {
+    // room--popover-result
+    //====================
+    .room--popover-result {
         ::v-deep(.room-popover-close svg use) {
             fill: #fff;
         }
