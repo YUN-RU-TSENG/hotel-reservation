@@ -57,7 +57,7 @@ describe('Component BaseDatePicker', () => {
 
         expect(wrapper.emitted()).toHaveProperty('update:begin')
 
-        //set end date
+        // set end date
         await wrapper.setProps({ begin: dayjs().format('YYYY-MM-DD'), end: '' })
         await wrapper
             .get('[data-test="date"]:not(.over) + [data-test="date"] + [data-test="date"]')
@@ -65,7 +65,7 @@ describe('Component BaseDatePicker', () => {
 
         expect(wrapper.emitted()).toHaveProperty('update:end')
 
-        // reSelect begin date
+        // reselect begin date
         await wrapper.setProps({
             begin: dayjs().add(10, 'day').format('YYYY-MM-DD'),
             end: dayjs().add(1, 'day').format('YYYY-MM-DD'),
