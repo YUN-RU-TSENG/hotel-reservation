@@ -3,12 +3,12 @@ import dayjs from 'dayjs'
 
 /**
  * calculate booking days
- * @param {*} begin
- * @param {*} end
- * @param {*} props
+ * @param begin
+ * @param end
+ * @param props
  * @returns calculate result
  */
-function useCalculateBookingDays(begin, end, props) {
+export default function useCalculateBookingDays(begin, end, props) {
     const answer = computed(() => {
         if (!begin.value || !end.value) return ''
 
@@ -23,7 +23,6 @@ function useCalculateBookingDays(begin, end, props) {
         if (conflict.length) return `日子 ${conflict.join('、')} 已被預訂`
         if (!conflict.length) return '日子可以預訂'
     })
+
     return { answer }
 }
-
-export default useCalculateBookingDays

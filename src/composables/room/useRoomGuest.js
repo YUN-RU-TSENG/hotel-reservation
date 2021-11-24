@@ -6,5 +6,6 @@ export default function useRoomGuest(room) {
             ? room.descriptionShort.GuestMin
             : room.descriptionShort.GuestMin + '~' + room.descriptionShort.GuestMax
     )
+
     return { roomGuest }
 }

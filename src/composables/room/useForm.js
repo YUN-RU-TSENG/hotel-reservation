@@ -20,6 +20,7 @@ export default function useForm() {
         }),
     })
 
+    // ! waiting for refactor : use reactive to wrapper
     const { value: name, errorMessage: nameError } = useVeeField('name')
     const { value: phone, errorMessage: phoneError } = useVeeField('phone')
     const { value: beginDate, errorMessage: beginDateError } = useVeeField('beginDate')

@@ -1,5 +1,10 @@
 import { computed, ref } from '@vue/reactivity'
 
+/**
+ * calculate background style
+ * @param room
+ * @returns background style
+ */
 export default function useBackgroundStyle(room) {
     const currentBackground = ref(0)
     const backgroundOptions = computed(() =>

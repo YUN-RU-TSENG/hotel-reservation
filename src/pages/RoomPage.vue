@@ -1,7 +1,7 @@
 <template>
     <!-- room -->
     <section class="room">
-        <!-- rooom-booking -->
+        <!-- room-booking -->
         <section v-if="room.id" class="room-booking" :style="{ background }">
             <RoomBooking
                 class="room-booking-container"
@@ -16,7 +16,7 @@
             </RoomBooking>
         </section>
         <section class="room-introduce">
-            <!-- rooom-introduce -->
+            <!-- room-introduce -->
             <RoomInformation v-if="room.id" :room="room" :booking="booking" />
         </section>
     </section>
@@ -44,6 +44,7 @@
     import RoomResult from '../components/Room/RoomResult.vue'
     import BaseCarouselIndicators from '../components/Base/BaseCarouselIndicators.vue'
     import useBackgroundStyle from '../composables/Room/useBackgroundStyle.js'
+    import useBookingResult from '../composables/Room/useBookingResult.js'
     import useRoom from '../composables/room/useRoom.js'
     import api from '../API/api'
     import { ref } from 'vue'
@@ -58,6 +59,7 @@
             RoomResult,
             BaseCarouselIndicators,
         },
+        // ! waiting for refactor
         async beforeRouteEnter(to, from, next) {
             try {
                 const { data } = await api.get(`/room/${to.params.id}`)
@@ -70,28 +72,26 @@
             }
         },
         setup() {
+            // ! waiting for refactor
             const booking = ref([])
+
+            const isShowBookingResult = ref(false)
+            const isShowBookingForm = ref(false)
             const { room } = useRoom()
             const { background, currentBackground, backgroundFormatOptions } =
                 useBackgroundStyle(room)
-            const bookingResult = ref({})
-            const updateBookingResult = (result) => {
-                bookingResult.value = result
-                isShowBookingResult.value = true
-            }
-            const isShowBookingForm = ref(false)
-            const isShowBookingResult = ref(false)
+            const { bookingResult, updateBookingResult } = useBookingResult(isShowBookingResult)
 
             return {
                 booking,
+                isShowBookingForm,
+                isShowBookingResult,
+                room,
                 background,
                 currentBackground,
                 backgroundFormatOptions,
-                room,
                 bookingResult,
                 updateBookingResult,
-                isShowBookingForm,
-                isShowBookingResult,
             }
         },
     }
@@ -127,6 +127,7 @@
             background-color: transparent;
             border-color: #38470b;
         }
+
         ::v-deep(form input:checked ~ span) {
             background-color: #38470b;
         }

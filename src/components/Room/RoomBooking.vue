@@ -32,6 +32,7 @@
         setup(props, { emit }) {
             const { roomPrice } = useRoomPrice(props.room)
             const toggleShow = () => emit('toggle-show')
+
             return { toggleShow, roomPrice }
         },
     }

@@ -24,6 +24,7 @@ export default function useTotalStayDays(beginDate, endDate, props) {
             props.room.holidayPrice * (totalStayDays.value.length - totalStayNormalDaysLength.value)
         )
     })
+
     return {
         totalStayDays,
         totalStayNormalDaysLength,
