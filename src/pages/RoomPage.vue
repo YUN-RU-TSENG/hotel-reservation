@@ -21,8 +21,8 @@
         </section>
     </section>
     <!-- popover -->
-    <!-- room--popover-booking -->
-    <RoomPopover v-if="room.id" v-model:show="isShowBookingForm" class="room--popover-booking">
+    <!-- room-popover-booking -->
+    <RoomPopover v-if="room.id" v-model:show="isShowBookingForm" class="room-popover-booking">
         <RoomBookingForm
             :room="room"
             @submit-form="updateBookingResult"
@@ -30,8 +30,8 @@
         />
     </RoomPopover>
     <!-- popover -->
-    <!-- room--popover-result -->
-    <RoomPopover v-if="room.id" v-model:show="isShowBookingResult" class="room--popover-result">
+    <!-- room-popover-result -->
+    <RoomPopover v-if="room.id" v-model:show="isShowBookingResult" class="room-popover-result">
         <RoomResult :result="bookingResult" />
     </RoomPopover>
 </template>
@@ -142,17 +142,17 @@
         color: #38470b;
     }
 
-    // room--popover-booking
+    // room-popover-booking
     //====================
-    .room--popover-booking {
+    .room-popover-booking {
         ::v-deep(.room-popover-container) {
             display: flex;
         }
     }
 
-    // room--popover-result
+    // room-popover-result
     //====================
-    .room--popover-result {
+    .room-popover-result {
         ::v-deep(.room-popover-close svg use) {
             fill: #fff;
         }
