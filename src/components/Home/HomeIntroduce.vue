@@ -1,12 +1,14 @@
 <template>
-    <img class="introduce-image" src="../../assets/images/logo.png" alt="logo house hotel" />
-    <section class="introduce-text">
-        <p><strong>好室旅店。HOUSE HOTEL</strong></p>
-        <p>花蓮縣花蓮市國聯一路1號</p>
-        <p>03-8321155</p>
-        <p>HOUSE@HOTEL.COM</p>
-    </section>
-    <slot></slot>
+    <div>
+        <img class="introduce-image" src="../../assets/images/logo.png" alt="logo house hotel" />
+        <section class="introduce-text">
+            <p><strong>好室旅店。HOUSE HOTEL</strong></p>
+            <p>花蓮縣花蓮市國聯一路1號</p>
+            <p>03-8321155</p>
+            <p>HOUSE@HOTEL.COM</p>
+        </section>
+        <slot></slot>
+    </div>
 </template>
 
 <script>
