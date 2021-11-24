@@ -1,6 +1,6 @@
 <template>
-    <div class="row">
-        <div v-for="room of rooms" :key="room.name" class="col">
+    <div class="home-room-list row">
+        <div v-for="room of rooms" :key="room.name" class="home-room-list-item col">
             <router-link
                 v-slot="{ navigate }"
                 :to="{ name: 'room', params: { id: room.id } }"
@@ -23,20 +23,26 @@
 
 <script>
     export default {
+        name: 'HomeRoomList',
         props: { rooms: { type: Array, required: true } },
     }
 </script>
 
 <style lang="scss" scoped>
-    .row {
+    // home-room-list
+    //====================
+    .home-room-list {
+    }
+
+    .home-room-list.row {
         display: flex;
         max-width: 825px;
         flex-wrap: wrap;
     }
 
-    .col {
-        flex: 0 1 33.33%;
-
+    // home-room-list-item
+    //====================
+    .home-room-list-item {
         a {
             font-size: 0px;
             display: block;
@@ -67,5 +73,9 @@
                 color: #fff;
             }
         }
+    }
+
+    .home-room-list-item.col {
+        flex: 0 1 33.33%;
     }
 </style>
